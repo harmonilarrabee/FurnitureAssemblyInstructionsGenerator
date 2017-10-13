@@ -1,58 +1,132 @@
 import random
 
-def main():
-  instructions = [
-  "Attatch left side of chair leg C to tabletop with screwdriver. ",
-  "Turn asssembly upside down. ",
-  "Place seat of chair on right sofa arm and duct tape in place. ",
-  "Attatch table leg A to chair back, using hammer and screws. ",
-  "Use screwdriver and nails to attatch table leg B to sofa cushion. ",
-  "Attatch right side of table leg A to section G of sofa frame with nails. ",
-  "Turn asssembly 90 degrees clockwise. ",
-  "Place chair back on left sofa arm and solder in place. ",
-  "Attatch chair leg D to main table support, using wrench to apply duct tape. ",
-  "Use hammer and screws to attatch sofa base to chair arm. ",
+chairParts = [
+"leg A",
+"leg B",
+"leg C",
+"leg D",
+"seat",
+"back",
+"left arm",
+"right arm",
+]
+
+tableParts = [
+"leg A",
+"leg B",
+"leg C",
+"leg D",
+"support 1",
+"support 2",
+"tabletop section A",
+"tabletop section B",
+]
+
+sofaParts = [
+"base",
+"body",
+"back",
+"left armrest",
+"right armrest",
+"cushion A",
+"cushion B",
+"cushion C",
+]
+
+hardware = [
+"duct tape",
+"screws",
+"nails",
+"bolts",
+]
+
+tools = [
+"screwdriver",
+"hammer",
+"wrench",
   ]
 
-  printHeader()
-  selection = int(getUserSelection())
-  if selection == 0:
-    printChairAssemblyInstructions(instructions)
-  elif selection == 1:
-    printTableAssemblyInstructions(instructions)
-  elif selection == 2:
-    printSofaAssemblyInstructions(instructions)
-  else:
-    print ("SELECTION NOT RECOGNIZED")
+directions = [
+"upside down",
+"on its side",
+"90 degrees clockwise",
+"90 degrees counterclockwise",
+]
 
 inputQuestions = [ 
-  "For CHAIR, type 0",
-  "For TABLE, type 1",
-  "For SOFA, type 2",
+"For CHAIR, type 0",
+"For TABLE, type 1",
+"For SOFA, type 2",
+"If you don't want to build anything, type 3",
 ]
+
+instructions = []
+
+def main():
+  printHeader()
+  printInstructions()
+
+def printHeader():
+  print("What kind of furniture do you want to assemble?")
+
+def printInstructions():
+  while True:
+    isChair = False
+    isTable = False
+    selection = int(getUserSelection())  
+    if selection == 0:
+  	  isChair = True
+  	  generateInstructions(instructions, isChair, isTable)
+    elif selection == 1:
+  	  isTable = True
+  	  generateInstructions(instructions, isChair, isTable)
+    elif selection == 2:
+      generateInstructions(instructions, isChair, isTable)
+    elif selection == 3:
+  	  print ("Okay, goodbye!")
+  	  break
+    else:
+      print ("")
+      print ("I'm sorry, that's not one of the options. Please type either 0, 1, 2, or 3. ")
 
 def getUserSelection():
   print (inputQuestions[0])
   print (inputQuestions[1])
   print (inputQuestions[2])
+  print (inputQuestions[3])
   return input("Type selection and press enter: ")
 
-def printHeader():
-  print("Furniture Assembly Instructions")
+def generateInstructions(instructions, isChair, isTable):
+  if isChair:
+    x = "Chair"
+  elif isTable:
+    x = "Table"
+  else:
+    x = "Sofa"
+  for i in range (0,2):
+    for i in range (0,3):
+  	  appendAttatchInstruction(instructions, isChair, isTable)
+    appendTurnInstruction(instructions)
+  for i in range (0,2):
+  	appendAttatchInstruction(instructions, isChair, isTable)
+  print ("")
+  print (x + " Assembly Instructions:")
+  for instruction in instructions:
+    print (instruction)
+  print ("")
+  instructions [:] = []
 
-def printChairAssemblyInstructions(instructions):
-  print("Chair Assembly Instructions:")
-  for i in range(0,5):
-    print (random.choice(instructions))
+def appendTurnInstruction(instructions):
+  instructions.append("Turn assembly " + random.choice(directions) + ". ")
 
-def printTableAssemblyInstructions(instructions):
-  print("Table Assembly Instructions:")
-  for i in range(0,5):
-    print (random.choice(instructions))
-
-def printSofaAssemblyInstructions(instructions):
-  print("Sofa Assembly Instructions:")
-  for i in range(0,5):
-    print (random.choice(instructions))
+def appendAttatchInstruction(instructions, isChair, isTable):
+  if isChair:
+    x = chairParts
+  elif isTable:
+    x = tableParts
+  else:
+    x = sofaParts
+  partsList = random.sample(x, 2)
+  instructions.append("Attatch " + partsList[0] + " to " + partsList[1] + " with " + random.choice(hardware) + " and " + random.choice(tools) + ". ")
 
 main()
