@@ -63,31 +63,26 @@ inputQuestions = [
 instructions = []
 
 def main():
-  printHeader()
-  printInstructions()
-
-def printHeader():
-  print("What kind of furniture do you want to assemble?")
-
-def printInstructions():
   while True:
-    isChair = False
-    isTable = False
-    selection = int(getUserSelection())  
-    if selection == 0:
+  	print ("What kind of furniture do you want to assemble?")
+  	isChair = False
+  	isTable = False
+  	selection = int(getUserSelection())
+  	if selection == 0:
   	  isChair = True
-  	  generateInstructions(instructions, isChair, isTable)
-    elif selection == 1:
+  	  printInstructions(instructions, isChair, isTable)
+  	elif selection == 1:
   	  isTable = True
-  	  generateInstructions(instructions, isChair, isTable)
-    elif selection == 2:
-      generateInstructions(instructions, isChair, isTable)
-    elif selection == 3:
+  	  printInstructions(instructions, isChair, isTable)
+  	elif selection == 2:
+  	  printInstructions(instructions, isChair, isTable)
+  	elif selection == 3:
   	  print ("Okay, goodbye!")
   	  break
-    else:
-      print ("")
-      print ("I'm sorry, that's not one of the options. Please type either 0, 1, 2, or 3. ")
+  	else:
+  	  print ("")
+  	  print ("I'm sorry, that's not one of the options. Please type either 0, 1, 2, or 3. ")
+  	  print ("")
 
 def getUserSelection():
   print (inputQuestions[0])
@@ -96,7 +91,7 @@ def getUserSelection():
   print (inputQuestions[3])
   return input("Type selection and press enter: ")
 
-def generateInstructions(instructions, isChair, isTable):
+def printInstructions(instructions, isChair, isTable):
   if isChair:
     x = "Chair"
   elif isTable:
@@ -105,10 +100,10 @@ def generateInstructions(instructions, isChair, isTable):
     x = "Sofa"
   for i in range (0,2):
     for i in range (0,3):
-  	  appendAttatchInstruction(instructions, isChair, isTable)
-    appendTurnInstruction(instructions)
+  	  generateAttatchInstruction(instructions, isChair, isTable)
+    generateTurnInstruction(instructions)
   for i in range (0,2):
-  	appendAttatchInstruction(instructions, isChair, isTable)
+  	generateAttatchInstruction(instructions, isChair, isTable)
   print ("")
   print (x + " Assembly Instructions:")
   for instruction in instructions:
@@ -116,10 +111,10 @@ def generateInstructions(instructions, isChair, isTable):
   print ("")
   instructions [:] = []
 
-def appendTurnInstruction(instructions):
+def generateTurnInstruction(instructions):
   instructions.append("Turn assembly " + random.choice(directions) + ". ")
 
-def appendAttatchInstruction(instructions, isChair, isTable):
+def generateAttatchInstruction(instructions, isChair, isTable):
   if isChair:
     x = chairParts
   elif isTable:
