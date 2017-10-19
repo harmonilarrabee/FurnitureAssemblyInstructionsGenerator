@@ -1,5 +1,12 @@
 import random
 
+import sqlalchemy, random
+from sqlalchemy import create_engine
+from sqlalchemy import Table, Column, Integer, String, MetaData, ForeignKey
+from sqlalchemy.sql import text
+
+engine = create_engine('sqlite:///:memory:', echo=True)
+
 chairParts = [
 "leg A",
 "leg B",
@@ -57,41 +64,53 @@ inputQuestions = [
 "For CHAIR, type 0",
 "For TABLE, type 1",
 "For SOFA, type 2",
-"If you don't want to build anything, type 3",
+"To retrieve previoulsy generated instructions, type 3",
+"If you don't want to build   or retrieve anything, type 4",
 ]
 
 instructions = []
 
 def main():
+  userName = str(getUserName())
   while True:
-  	print ("What kind of furniture do you want to assemble?")
+  	printHeader()
   	isChair = False
   	isTable = False
   	selection = int(getUserSelection())
+  	while not selection in range(0, 5):
+  	  selection = int(errorMessage())
   	if selection == 0:
   	  isChair = True
-  	  printInstructions(instructions, isChair, isTable)
+  	  printInstructions(instructions, isChair, isTable, userName)
   	elif selection == 1:
   	  isTable = True
-  	  printInstructions(instructions, isChair, isTable)
+  	  printInstructions(instructions, isChair, isTable, userName)
   	elif selection == 2:
-  	  printInstructions(instructions, isChair, isTable)
+  	  printInstructions(instructions, isChair, isTable, userName)
   	elif selection == 3:
-  	  print ("Okay, goodbye!")
+  	  retrieveInstructions()
+  	  print ("")
+  	  print ("Sorry, this function is still in progress. PLease try again later.")
+  	  print("")
+  	elif selection == 4:
+  	  sayGoodbye()
   	  break
-  	else:
-  	  print ("")
-  	  print ("I'm sorry, that's not one of the options. Please type either 0, 1, 2, or 3. ")
-  	  print ("")
+
+def printHeader():
+  print ("What kind of furniture do you want to assemble?")
+
+def getUserName():
+  return input("Hello! Please type your name and press enter: ")
 
 def getUserSelection():
   print (inputQuestions[0])
   print (inputQuestions[1])
   print (inputQuestions[2])
   print (inputQuestions[3])
+  print (inputQuestions[4])
   return input("Type selection and press enter: ")
 
-def printInstructions(instructions, isChair, isTable):
+def printInstructions(instructions, isChair, isTable, userName):
   if isChair:
     x = "Chair"
   elif isTable:
@@ -105,10 +124,11 @@ def printInstructions(instructions, isChair, isTable):
   for i in range (0,2):
   	generateAttatchInstruction(instructions, isChair, isTable)
   print ("")
-  print (x + " Assembly Instructions:")
+  print (userName + "'s " + x + " Assembly Instructions:")
   for instruction in instructions:
     print (instruction)
   print ("")
+  saveToDatabase()
   instructions [:] = []
 
 def generateTurnInstruction(instructions):
@@ -123,5 +143,20 @@ def generateAttatchInstruction(instructions, isChair, isTable):
     x = sofaParts
   partsList = random.sample(x, 2)
   instructions.append("Attatch " + partsList[0] + " to " + partsList[1] + " with " + random.choice(hardware) + " and " + random.choice(tools) + ". ")
+
+def errorMessage():
+  print ("")
+  return input("I'm sorry, that's not one of the options. Please type either 0, 1, 2, or 3: ")
+  print ("")
+
+def sayGoodbye():
+  print ("")
+  print ("Okay, goodbye!")
+
+def saveToDatabase():
+  pass
+
+def retrieveInstructions():
+  pass
 
 main()
