@@ -5,7 +5,7 @@ from sqlalchemy import create_engine
 from sqlalchemy import Table, Column, Integer, String, MetaData, ForeignKey
 from sqlalchemy.sql import text
 
-engine = create_engine('sqlite:///:memory:', echo=True)
+engine = create_engine('sqlite:///mydb.db', echo=True)
 
 chairParts = [
 "leg A",
@@ -65,7 +65,7 @@ inputQuestions = [
 "For TABLE, type 1",
 "For SOFA, type 2",
 "To retrieve previoulsy generated instructions, type 3",
-"If you don't want to build   or retrieve anything, type 4",
+"If you don't want to build or retrieve anything, type 4",
 ]
 
 instructions = []
@@ -88,7 +88,7 @@ def main():
   	elif selection == 2:
   	  printInstructions(instructions, isChair, isTable, userName)
   	elif selection == 3:
-  	  retrieveInstructions()
+  	  #retrieveInstructions()
   	  print ("")
   	  print ("Sorry, this function is still in progress. PLease try again later.")
   	  print("")
@@ -112,11 +112,11 @@ def getUserSelection():
 
 def printInstructions(instructions, isChair, isTable, userName):
   if isChair:
-    x = "Chair"
+    furnitureType = "Chair"
   elif isTable:
-    x = "Table"
+    furnitureType = "Table"
   else:
-    x = "Sofa"
+    furnitureType = "Sofa"
   for i in range (0,2):
     for i in range (0,3):
   	  generateAttatchInstruction(instructions, isChair, isTable)
@@ -124,11 +124,11 @@ def printInstructions(instructions, isChair, isTable, userName):
   for i in range (0,2):
   	generateAttatchInstruction(instructions, isChair, isTable)
   print ("")
-  print (userName + "'s " + x + " Assembly Instructions:")
+  print (userName + "'s " + furnitureType + " Assembly Instructions:")
   for instruction in instructions:
     print (instruction)
   print ("")
-  saveToDatabase()
+  #saveToDatabase(instructions, userName, furnitureType)
   instructions [:] = []
 
 def generateTurnInstruction(instructions):
@@ -153,10 +153,34 @@ def sayGoodbye():
   print ("")
   print ("Okay, goodbye!")
 
-def saveToDatabase():
-  pass
+def saveToDatabase(instructions, userName, furnitureType):
+  conn = engine.connect()
+  metadata = MetaData()
+  createTable(metadata, conn)
+  statement = text("INSERT INTO instructions ('name', 'furnitureType', 'instructionOne', 'instructionTwo', 'instructionThree', 'instructionFour', 'instructionFive', 'instructionSix', 'instructionSeven', 'instructionEight', 'instructionNine', 'instructionTen')"
+  " values (str(" + userName + "), str(" + furnitureType + "), str(" + instructions[0] + "), str(" + instructions[1] + "), str(" + instructions[2] + "), str(" + instructions[3] + "), str(" + instructions[4] + "), str(" + instructions[5] + "), str(" + instructions[6] + "), str(" + instructions[7] + "), str(" + instructions[8] + "), str(" + instructions[9] + ")")
+  conn.execute(statement)
 
 def retrieveInstructions():
-  pass
+  query = text("SELECT * from instructions")
+  result = conn.execute(query).fetchall()
+  print(result)
+
+def createTable(metadata, conn):
+  instructions = Table('instructions', metadata,
+    Column('userName', String, primary_key=True),
+    Column('furnitureType', String),
+    Column('instructionOne', String),
+    Column('instructionTwo', String),
+    Column('instructionThree', String),
+    Column('instructionFour', String),
+    Column('instructionFive', String),
+    Column('instructionSix', String),
+    Column('instructionSeven', String),
+    Column('instructionEight', String),
+    Column('instructionNine', String),
+    Column('instructionTen', String))
+  metadata.create_all(engine)
+
 
 main()
